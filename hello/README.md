@@ -52,3 +52,7 @@ When pool.execute(|| handle_connection(stream)) is called, the closure is boxed 
 
 When the ThreadPool is dropped (e.g. the server shuts down), the Drop impl runs. It first drops the sender, which closes the channel. When workers try to recv() on a closed channel, they get an Err, hit the break, and exit their loop. The main thread then calls join() on each worker to wait for them to finish whatever job they're currently running before the program exits cleanly.
 
+## Commit Bonus Reflection
+The build function is a safer alternative to new for creating a ThreadPool. The key difference is how each handles invalid input, new uses assert!(size > 0), which panics and crashes the program immediately if the size is zero, while build returns a Result<ThreadPool, PoolCreationError>, giving the caller control over what happens when something goes wrong.
+
+In main, this means instead of a silent crash, the server can respond meaningfully, printing an error message and exiting cleanly via process::exit(1). This makes build the more appropriate choice for a server context, where a controlled failure is always preferable to an unexpected panic.
