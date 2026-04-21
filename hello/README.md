@@ -33,3 +33,10 @@ How to split between responses, The if/else block handles routing only, it picks
 
 ![Commit 3 screen capture](milestone3.png)
 
+## Commit 4 Reflection
+- http://127.0.0.1:7878/sleep took 10 seconds to load
+- http://127.0.0.1:7878 had to wait until /sleep finished 
+  before it could load, even though it should have been instant
+
+This happens because our server is single-threaded. It can only handle one request at a time. When /sleep is being processed, the server is completely blocked by thread::sleep(Duration::from_secs(10)) and cannot accept or process any other incoming requests until it finishes.
+In a real-world scenario, imagine hundreds of users trying to access your server at the same time. If even one request is slow, every other user has to wait in line. This makes the server feel unresponsive and unusable under heavy load. This is exactly the problem that multi-threading solves, which we will implement in the next milestone.
